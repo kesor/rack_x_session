@@ -7,7 +7,6 @@ module Rack
       @env_key = "HTTP_#{header_name}".upcase.tr('-', '_')
     end
     def call(env)
-      request = ::Rack::Request.new(env)
       env[@env_key] = 'session data'
       @app.call(env)
     end
