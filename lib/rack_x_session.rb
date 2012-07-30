@@ -2,12 +2,17 @@ require 'rack'
 
 module Rack
   class XSession
-    def initialize(app, header_name='X-Session')
+    attr_reader :store
+    def initialize(app, kwargs={})
+      header_name = kwargs.delete(:header_name) || 'X-Session'
+      store_class = kwargs.delete(:store_class) || Hash
+
       @app = app
       @env_key = "HTTP_#{header_name}".upcase.tr('-', '_')
+      @store = store_class.new
     end
     def call(env)
-      env[@env_key] = 'session data'
+      env['rack.session'] = env[@env_key]
       @app.call(env)
     end
   end
